@@ -21,16 +21,46 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# Limpeza aprimorada dos valores (força a conversão para numérico)
-df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'].str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.'), errors='coerce').fillna(0)
-df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'].str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.'), errors='coerce').fillna(0)
+# Diagnóstico Detalhado
+st.write("📊 Tipos de Dados Originais:")
+st.write(df.dtypes)
 
-# Verificar valores não numéricos
-st.write("🔍 Valores únicos em 'Valor_Receita':")
-st.write(df['Valor_Receita'].unique())
+# Amostra de valores em Valor_Receita e Valor_Despesa
+st.write("🔍 Amostra de Valores (Valor_Receita):")
+st.write(df['Valor_Receita'].head(10))
 
-st.write("🔍 Valores únicos em 'Valor_Despesa':")
-st.write(df['Valor_Despesa'].unique())
+st.write("🔍 Amostra de Valores (Valor_Despesa):")
+st.write(df['Valor_Despesa'].head(10))
+
+# Identificar valores não convertidos corretamente
+st.write("🔎 Valores únicos em 'Valor_Receita':", df['Valor_Receita'].unique())
+st.write("🔎 Valores únicos em 'Valor_Despesa':", df['Valor_Despesa'].unique())
+
+# Limpeza avançada de valores
+df['Valor_Despesa'] = (
+    df['Valor_Despesa']
+    .astype(str)                                  # Garante que tudo é string
+    .str.strip()                                  # Remove espaços em branco
+    .str.replace(r'[^\d,.-]', '', regex=True)     # Remove tudo que não é número, vírgula ou ponto
+    .str.replace(',', '.', regex=False)           # Troca vírgula por ponto (padrão float)
+)
+df['Valor_Receita'] = (
+    df['Valor_Receita']
+    .astype(str)
+    .str.strip()
+    .str.replace(r'[^\d,.-]', '', regex=True)
+    .str.replace(',', '.', regex=False)
+)
+
+# Converte para numérico, forçando NaN para 0
+df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
+df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
+
+# Diagnóstico após a limpeza
+st.write("📊 Após a limpeza:")
+st.write(df[['Valor_Despesa', 'Valor_Receita']].head(10))
+st.write("🔍 Valores únicos (Valor_Receita):", df['Valor_Receita'].unique())
+st.write("🔍 Valores únicos (Valor_Despesa):", df['Valor_Despesa'].unique())
 
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
