@@ -21,15 +21,9 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# Limpeza de valores
-df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(' ', '').str.replace(',', '.'), errors='coerce').fillna(0)
-# Limpeza aprimorada dos valores
-df['Valor_Receita'] = (
-    df['Valor_Receita']
-    .str.replace(r'[^\d,.-]', '', regex=True)  # Remove tudo que não é número, ponto ou vírgula
-    .str.replace(',', '.', regex=False)       # Troca vírgula por ponto
-    .str.strip()                               # Remove espaços em branco
-)
+# Limpeza aprimorada dos valores (força a conversão para numérico)
+df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'].str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.'), errors='coerce').fillna(0)
+df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'].str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.'), errors='coerce').fillna(0)
 
 # Verificar valores não numéricos
 st.write("🔍 Valores únicos em 'Valor_Receita':")
