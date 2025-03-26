@@ -22,10 +22,10 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 df = df.drop(0)
 
 # Limpar e converter as colunas de valores para float
-df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(',', '.').astype(float)
-df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.').astype(float)
+df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(',', '.')
+df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.')
 
-# Converte para numérico, forçando NaN para 0
+# Tenta converter para float, substituindo valores inválidos (como strings) por NaN
 df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
 df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
 
