@@ -31,6 +31,13 @@ df['Valor_Receita'] = (
     .str.strip()                               # Remove espaços em branco
 )
 
+# Verificar valores não numéricos
+st.write("🔍 Valores únicos em 'Valor_Receita':")
+st.write(df['Valor_Receita'].unique())
+
+st.write("🔍 Valores únicos em 'Valor_Despesa':")
+st.write(df['Valor_Despesa'].unique())
+
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
 receitas = df[['Data_Receita', 'Categoria_Receita', 'Descrição_Receita', 'Valor_Receita']].dropna()
