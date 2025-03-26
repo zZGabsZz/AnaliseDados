@@ -21,11 +21,11 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# Limpar e converter as colunas de valores para numérico
-df['Valor_Despesa'] = df['Valor_Despesa'].astype(str).str.strip().str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.')
-df['Valor_Receita'] = df['Valor_Receita'].astype(str).str.strip().str.replace(r'[^\d,.-]', '', regex=True).str.replace(',', '.')
+# Limpar e converter as colunas de valores para float
+df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(',', '.')
+df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.')
 
-# Converte para numérico mantendo casas decimais
+# Tenta converter para float, substituindo valores inválidos (como strings) por NaN
 df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
 df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
 
@@ -67,6 +67,8 @@ for i, v in enumerate([total_despesas, total_receitas]):
 st.pyplot(fig)
 
 # Gráficos de Despesas e Receitas por Data
+
+# Despesas por Data
 st.subheader("📊 Despesas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
@@ -74,6 +76,7 @@ plt.xticks(rotation=45)
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
+# Receitas por Data
 st.subheader("📊 Receitas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
