@@ -82,11 +82,18 @@ despesas_agregadas = despesas.groupby('Data_Despesa')['Valor_Despesa'].sum().res
 # Agrupando as receitas por mês
 receitas_agregadas = receitas.groupby('Data_Receita')['Valor_Receita'].sum().reset_index()
 
+# 🔹 Ajustando para garantir que os meses estão em ordem crescente
+despesas_agregadas['Data_Despesa'] = pd.to_numeric(despesas_agregadas['Data_Despesa'], errors='coerce')
+despesas_agregadas = despesas_agregadas.sort_values(by='Data_Despesa')
+
+receitas_agregadas['Data_Receita'] = pd.to_numeric(receitas_agregadas['Data_Receita'], errors='coerce')
+receitas_agregadas = receitas_agregadas.sort_values(by='Data_Receita')
+
 # Gráfico de Despesas ao Longo do Tempo
 st.subheader("📊 Despesas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=despesas_agregadas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
-plt.xticks(rotation=45)
+plt.xticks(range(1, 13))  # Garante que os meses de 1 a 12 apareçam no eixo X
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
@@ -95,7 +102,7 @@ st.pyplot(fig)
 st.subheader("📊 Receitas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=receitas_agregadas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
-plt.xticks(rotation=45)
+plt.xticks(range(1, 13))  # Garante que os meses de 1 a 12 apareçam no eixo X
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
