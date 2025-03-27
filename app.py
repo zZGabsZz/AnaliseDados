@@ -27,6 +27,10 @@ def limpar_valor(valor):
         valor = valor.replace('R$', '').replace(' ', '').replace('.', '')  # Remove espaços e pontos de milhar
         valor = valor.replace(',', '.')  # Substitui vírgulas por ponto para conversão numérica
     valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
+    
+    # Verifica se o valor foi convertido para NaN
+    if pd.isna(valor_convertido):
+        st.write(f"⚠️ Valor não numérico encontrado: {valor}")  # Exibe o valor não numérico
     return valor_convertido
 
 # Aplica a função a ambas as colunas
