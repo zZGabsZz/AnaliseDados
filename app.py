@@ -24,7 +24,8 @@ df = df.drop(0)
 # 🔹 Função para limpar e converter valores
 def limpar_valor(valor):
     if isinstance(valor, str):  # Confirma que é string antes de limpar
-        valor = valor.replace('R$', '').replace(',', '.').strip()
+        valor = valor.replace('R$', '').replace(' ', '').replace('.', '')  # Remove espaços e pontos de milhar
+        valor = valor.replace(',', '.')  # Substitui vírgulas por ponto para conversão numérica
     valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
     
     # Verifica se o valor foi convertido para NaN
@@ -79,7 +80,6 @@ plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
-
 
 # Gráficos de Despesas e Receitas por Data
 
