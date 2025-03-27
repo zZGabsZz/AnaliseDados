@@ -21,19 +21,18 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# Função para limpar e converter valores numéricos
+# 🔹 Função para limpar e converter valores
 def limpar_valor(valor):
-    if isinstance(valor, str):
-        valor = valor.replace('R$', '').replace(',', '.')
-    return pd.to_numeric(valor, errors='coerce')
+    if isinstance(valor, str):  # Confirma que é string antes de limpar
+        valor = valor.replace('R$', '').replace(',', '.').strip()
+    return pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
 
-# Aplica a função de limpeza
+# Aplica a função a ambas as colunas
 df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor).fillna(0)
 df['Valor_Receita'] = df['Valor_Receita'].apply(limpar_valor).fillna(0)
 
-# Função para formatar valores
-def formatar(valor):
-    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+# 🔎 Verificação de tipos
+st.write("Tipos de dados após conversão:", df.dtypes)
 
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
@@ -43,6 +42,10 @@ receitas = df[['Data_Receita', 'Categoria_Receita', 'Descrição_Receita', 'Valo
 total_despesas = despesas['Valor_Despesa'].sum()
 total_receitas = receitas['Valor_Receita'].sum()
 saldo = total_receitas - total_despesas
+
+# 🔹 Função para formatar os valores em moeda
+def formatar(valor):
+    return f"R$ {valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
 
 # Exibe o resumo financeiro no Streamlit
 st.header("📊 Resumo Financeiro")
@@ -69,7 +72,7 @@ sns.barplot(x=['Despesas', 'Receitas'], y=[total_despesas, total_receitas], pale
 plt.ylabel('Valor (R$)')
 plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
-    plt.text(i, v + 1000, f'R$ {v:,.2f}', ha='center', fontsize=12, color='black')
+    plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
 
 # Gráficos de Despesas e Receitas por Data
