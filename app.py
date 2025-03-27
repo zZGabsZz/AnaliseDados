@@ -97,18 +97,32 @@ st.pyplot(fig)
 # 📊 Gráfico combinado: Despesas e Receitas ao Longo do Tempo
 st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
+# Converte as colunas de data para datetime
+despesas['Data_Despesa'] = pd.to_datetime(despesas['Data_Despesa'], errors='coerce')
+receitas['Data_Receita'] = pd.to_datetime(receitas['Data_Receita'], errors='coerce')
+
+# Cria um novo dataframe combinando despesas e receitas
+df_combinado = pd.DataFrame()
+
+# Renomeia as colunas para evitar conflitos e facilitar o gráfico
+df_combinado['Data'] = pd.concat([despesas['Data_Despesa'], receitas['Data_Receita']])
+df_combinado['Valor'] = pd.concat([despesas['Valor_Despesa'], receitas['Valor_Receita']])
+df_combinado['Tipo'] = ['Despesa'] * len(despesas) + ['Receita'] * len(receitas)
+
+# Remove valores nulos para evitar erro no gráfico
+df_combinado = df_combinado.dropna()
+
+# Ordena os dados pela data
+df_combinado = df_combinado.sort_values(by='Data')
+
+# Plota o gráfico
 fig, ax = plt.subplots()
-
-# Plota as despesas (linha vermelha)
-sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red', label='Despesas')
-
-# Plota as receitas (linha verde)
-sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green', label='Receitas')
+sns.lineplot(data=df_combinado, x='Data', y='Valor', hue='Tipo', marker='o', palette={'Despesa': 'red', 'Receita': 'green'})
 
 plt.xticks(rotation=45)
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
-plt.legend()  # Exibe a legenda para diferenciar as linhas
+plt.legend(title='Tipo')  # Exibe a legenda para diferenciar Despesas e Receitas
 st.pyplot(fig)
 
 # 📊 Gráfico de Despesas e Receitas por Categoria e Mês
