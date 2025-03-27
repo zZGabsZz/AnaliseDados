@@ -76,19 +76,25 @@ st.pyplot(fig)
 
 # 📊 Gráficos de Despesas e Receitas por Data
 
-# 🔴 Despesas por Data
+# Agrupando as despesas por mês
+despesas_agregadas = despesas.groupby('Data_Despesa')['Valor_Despesa'].sum().reset_index()
+
+# Agrupando as receitas por mês
+receitas_agregadas = receitas.groupby('Data_Receita')['Valor_Receita'].sum().reset_index()
+
+# Gráfico de Despesas ao Longo do Tempo
 st.subheader("📊 Despesas ao Longo do Tempo")
 fig, ax = plt.subplots()
-sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
+sns.lineplot(data=despesas_agregadas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
 plt.xticks(rotation=45)
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
-# 🟢 Receitas por Data
+# Gráfico de Receitas ao Longo do Tempo
 st.subheader("📊 Receitas ao Longo do Tempo")
 fig, ax = plt.subplots()
-sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
+sns.lineplot(data=receitas_agregadas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
 plt.xticks(rotation=45)
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
@@ -98,12 +104,12 @@ st.pyplot(fig)
 st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
 # Criar o dataframe combinado para juntar despesas e receitas
-df_combinado = pd.concat([
+df_combinado = pd.concat([ 
     despesas[['Data_Despesa', 'Valor_Despesa']].rename(columns={'Data_Despesa': 'Mes', 'Valor_Despesa': 'Valor'}).assign(Tipo='Despesa'),
     receitas[['Data_Receita', 'Valor_Receita']].rename(columns={'Data_Receita': 'Mes', 'Valor_Receita': 'Valor'}).assign(Tipo='Receita')
 ])
 
-# Converter a coluna 'Mes' para numérico (caso não esteja) e ordenar corretamente
+# Garantir que os meses estão em ordem crescente (1 a 12)
 df_combinado['Mes'] = pd.to_numeric(df_combinado['Mes'], errors='coerce')
 df_combinado = df_combinado.sort_values(by='Mes')
 
@@ -133,8 +139,3 @@ sns.scatterplot(data=receitas, x='Data_Receita', y='Valor_Receita', hue='Categor
 ax_receitas.set_title('Receitas por Categoria e Mês')
 ax_receitas.tick_params(axis='x', rotation=45)
 st.pyplot(fig_receitas)
-
-
-
-
-
