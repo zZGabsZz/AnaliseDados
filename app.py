@@ -27,10 +27,6 @@ def limpar_valor(valor):
         valor = valor.replace('R$', '').replace(' ', '').replace('.', '')  # Remove espaços e pontos de milhar
         valor = valor.replace(',', '.')  # Substitui vírgulas por ponto para conversão numérica
     valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
-    
-    # Verifica se o valor foi convertido para NaN
-    if pd.isna(valor_convertido):
-        st.write(f"⚠️ Valor não numérico encontrado: {valor}")  # Exibe o valor não numérico
     return valor_convertido
 
 # Aplica a função a ambas as colunas
@@ -79,40 +75,4 @@ plt.ylabel('Valor (R$)')
 plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
-st.pyplot(fig)
-
-
-# Gráficos de Despesas e Receitas por Data
-
-# Despesas por Data
-st.subheader("📊 Despesas ao Longo do Tempo")
-fig, ax = plt.subplots()
-sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
-plt.xticks(rotation=45)
-plt.ylabel('Valor (R$)')
-st.pyplot(fig)
-
-# Receitas por Data
-st.subheader("📊 Receitas ao Longo do Tempo")
-fig, ax = plt.subplots()
-sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
-plt.xticks(rotation=45)
-plt.ylabel('Valor (R$)')
-st.pyplot(fig)
-
-# Gráfico de Despesas e Receitas com destaque de categorias
-st.subheader("📊 Despesas e Receitas por Categoria e Mês")
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Despesas por Categoria
-sns.scatterplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', hue='Categoria_Despesa', palette='Reds', s=100, ax=axes[0])
-axes[0].set_title('Despesas por Categoria e Mês')
-axes[0].tick_params(axis='x', rotation=45)
-
-# Receitas por Categoria
-sns.scatterplot(data=receitas, x='Data_Receita', y='Valor_Receita', hue='Categoria_Receita', palette='Greens', s=100, ax=axes[1])
-axes[1].set_title('Receitas por Categoria e Mês')
-axes[1].tick_params(axis='x', rotation=45)
-
-plt.tight_layout()
 st.pyplot(fig)
