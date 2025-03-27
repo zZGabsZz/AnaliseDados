@@ -110,10 +110,21 @@ st.pyplot(fig)
 # 📊 Comparação de Despesas e Receitas ao Longo do Tempo
 st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
-# Criar o dataframe combinado para juntar despesas e receitas
+# Agrupar as despesas e receitas por mês (soma de valores)
+despesas_agregadas = despesas.groupby('Data_Despesa')['Valor_Despesa'].sum().reset_index()
+receitas_agregadas = receitas.groupby('Data_Receita')['Valor_Receita'].sum().reset_index()
+
+# Garantir que os meses estão em ordem crescente (1 a 12) para ambos
+despesas_agregadas['Data_Despesa'] = pd.to_numeric(despesas_agregadas['Data_Despesa'], errors='coerce')
+despesas_agregadas = despesas_agregadas.sort_values(by='Data_Despesa')
+
+receitas_agregadas['Data_Receita'] = pd.to_numeric(receitas_agregadas['Data_Receita'], errors='coerce')
+receitas_agregadas = receitas_agregadas.sort_values(by='Data_Receita')
+
+# Criar o dataframe combinado para juntar as despesas e receitas, garantindo os valores de cada mês
 df_combinado = pd.concat([ 
-    despesas[['Data_Despesa', 'Valor_Despesa']].rename(columns={'Data_Despesa': 'Mes', 'Valor_Despesa': 'Valor'}).assign(Tipo='Despesa'),
-    receitas[['Data_Receita', 'Valor_Receita']].rename(columns={'Data_Receita': 'Mes', 'Valor_Receita': 'Valor'}).assign(Tipo='Receita')
+    despesas_agregadas[['Data_Despesa', 'Valor_Despesa']].rename(columns={'Data_Despesa': 'Mes', 'Valor_Despesa': 'Valor'}).assign(Tipo='Despesa'),
+    receitas_agregadas[['Data_Receita', 'Valor_Receita']].rename(columns={'Data_Receita': 'Mes', 'Valor_Receita': 'Valor'}).assign(Tipo='Receita')
 ])
 
 # Garantir que os meses estão em ordem crescente (1 a 12)
@@ -130,6 +141,7 @@ plt.ylabel('Valor (R$)')
 plt.legend(title='Tipo')  # Exibe a legenda para diferenciar Despesas e Receitas
 
 st.pyplot(fig)
+
 
 # 📊 Gráfico de Despesas por Categoria e Mês
 st.subheader("📊 Despesas por Categoria e Mês")
