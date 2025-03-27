@@ -114,10 +114,6 @@ st.pyplot(fig)
 # 📊 Gráfico combinado: Despesas e Receitas ao Longo do Tempo
 st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
-# Converte as colunas de data para datetime
-despesas['Data_Despesa'] = pd.to_datetime(despesas['Data_Despesa'], errors='coerce')
-receitas['Data_Receita'] = pd.to_datetime(receitas['Data_Receita'], errors='coerce')
-
 # Cria um novo dataframe combinando despesas e receitas
 df_combinado = pd.DataFrame()
 
