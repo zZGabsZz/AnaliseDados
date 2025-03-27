@@ -134,8 +134,6 @@ ax_receitas.set_title('Receitas por Categoria e Mês')
 ax_receitas.tick_params(axis='x', rotation=45)
 st.pyplot(fig_receitas)
 
-plt.tight_layout()
-st.pyplot(fig)
 
 
 
