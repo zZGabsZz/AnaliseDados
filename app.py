@@ -21,39 +21,36 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# 🔹 Função para limpar e converter valores
-def limpar_valor(valor):
-    if isinstance(valor, str):  # Confirma que é string antes de limpar
-        valor = valor.replace('R$', '').replace(' ', '').replace('.', '')  # Remove espaços e pontos de milhar
-        valor = valor.replace(',', '.')  # Substitui vírgulas por ponto para conversão numérica
-    valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
-    return valor_convertido
+# Limpar e converter as colunas de valores para float
+df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(',', '.')
+df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.')
 
-# Aplica a função a ambas as colunas
-df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor).fillna(0)
-df['Valor_Receita'] = df['Valor_Receita'].apply(limpar_valor).fillna(0)
+# Tenta converter para float, substituindo valores inválidos (como strings) por NaN
+df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
+df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
 
-# 🔎 Verificação de tipos
-st.write("Tipos de dados após conversão:", df.dtypes)
+# Convertendo as colunas de data para o formato datetime
+df['Data_Despesa'] = pd.to_datetime(df['Data_Despesa'], errors='coerce')
+df['Data_Receita'] = pd.to_datetime(df['Data_Receita'], errors='coerce')
 
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
 receitas = df[['Data_Receita', 'Categoria_Receita', 'Descrição_Receita', 'Valor_Receita']].dropna()
+
+# Agrupa as receitas e despesas por mês (usando .dt.to_period('M') para agrupar por mês)
+despesas_mensais = despesas.groupby(despesas['Data_Despesa'].dt.to_period('M'))['Valor_Despesa'].sum()
+receitas_mensais = receitas.groupby(receitas['Data_Receita'].dt.to_period('M'))['Valor_Receita'].sum()
 
 # Calcula totais
 total_despesas = despesas['Valor_Despesa'].sum()
 total_receitas = receitas['Valor_Receita'].sum()
 saldo = total_receitas - total_despesas
 
-# 🔹 Função para formatar os valores em moeda
-def formatar(valor):
-    return f"R$ {valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
-
 # Exibe o resumo financeiro no Streamlit
 st.header("📊 Resumo Financeiro")
-st.write(f"🔴 **Total de Despesas:** {formatar(total_despesas)}")
-st.write(f"🟢 **Total de Receitas:** {formatar(total_receitas)}")
-st.write(f"💰 **Saldo Líquido:** {formatar(saldo)}")
+st.write(f"🔴 **Total de Despesas:** R$ {total_despesas:,.2f}")
+st.write(f"🟢 **Total de Receitas:** R$ {total_receitas:,.2f}")
+st.write(f"💰 **Saldo Líquido:** R$ {saldo:,.2f}")
 
 # Identifica as 3 principais categorias
 top_despesas = despesas.groupby('Categoria_Despesa')['Valor_Despesa'].sum().nlargest(3)
@@ -61,11 +58,11 @@ top_receitas = receitas.groupby('Categoria_Receita')['Valor_Receita'].sum().nlar
 
 st.subheader("🔎 Principais Categorias de Despesas")
 for categoria, valor in top_despesas.items():
-    st.write(f"- {categoria}: {formatar(valor)}")
+    st.write(f"- {categoria}: R$ {valor:,.2f}")
 
 st.subheader("📈 Principais Fontes de Receita")
 for categoria, valor in top_receitas.items():
-    st.write(f"- {categoria}: {formatar(valor)}")
+    st.write(f"- {categoria}: R$ {valor:,.2f}")
 
 # Gráfico de comparação Despesas vs Receitas
 st.subheader("📊 Comparativo: Despesas vs Receitas")
@@ -74,24 +71,26 @@ sns.barplot(x=['Despesas', 'Receitas'], y=[total_despesas, total_receitas], pale
 plt.ylabel('Valor (R$)')
 plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
-    plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
+    plt.text(i, v + 1000, f'R$ {v:,.2f}', ha='center', fontsize=12, color='black')
 st.pyplot(fig)
 
-# Gráficos de Despesas e Receitas por Data
+# Gráficos de Despesas e Receitas por Mês
 
-# Despesas por Data
+# Despesas ao Longo do Tempo
 st.subheader("📊 Despesas ao Longo do Tempo")
 fig, ax = plt.subplots()
-sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
+sns.lineplot(data=despesas_mensais, x=despesas_mensais.index.astype(str), y=despesas_mensais, marker='o', color='red')
 plt.xticks(rotation=45)
+plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
-# Receitas por Data
+# Receitas ao Longo do Tempo
 st.subheader("📊 Receitas ao Longo do Tempo")
 fig, ax = plt.subplots()
-sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
+sns.lineplot(data=receitas_mensais, x=receitas_mensais.index.astype(str), y=receitas_mensais, marker='o', color='green')
 plt.xticks(rotation=45)
+plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
