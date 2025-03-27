@@ -64,7 +64,7 @@ st.subheader("📈 Principais Fontes de Receita")
 for categoria, valor in top_receitas.items():
     st.write(f"- {categoria}: {formatar(valor)}")
 
-# Gráfico de comparação Despesas vs Receitas
+# 📊 Gráfico de comparação Despesas vs Receitas
 st.subheader("📊 Comparativo: Despesas vs Receitas")
 fig, ax = plt.subplots()
 sns.barplot(x=['Despesas', 'Receitas'], y=[total_despesas, total_receitas], palette=['#FF6347', '#32CD32'])
@@ -74,9 +74,9 @@ for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
 
-# Gráficos de Despesas e Receitas por Data
+# 📊 Gráficos de Despesas e Receitas por Data
 
-# Despesas por Data (Agora com eixo X renomeado para "Meses")
+# 🔴 Despesas por Data
 st.subheader("📊 Despesas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
@@ -85,7 +85,7 @@ plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
-# Receitas por Data (Agora com eixo X renomeado para "Meses")
+# 🟢 Receitas por Data
 st.subheader("📊 Receitas ao Longo do Tempo")
 fig, ax = plt.subplots()
 sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
@@ -94,17 +94,33 @@ plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
+# 📊 Gráfico combinado: Despesas e Receitas ao Longo do Tempo
+st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
-# Gráfico de Despesas e Receitas com destaque de categorias
+fig, ax = plt.subplots()
+
+# Plota as despesas (linha vermelha)
+sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red', label='Despesas')
+
+# Plota as receitas (linha verde)
+sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green', label='Receitas')
+
+plt.xticks(rotation=45)
+plt.xlabel('Meses')  # Modifica o título do eixo X
+plt.ylabel('Valor (R$)')
+plt.legend()  # Exibe a legenda para diferenciar as linhas
+st.pyplot(fig)
+
+# 📊 Gráfico de Despesas e Receitas por Categoria e Mês
 st.subheader("📊 Despesas e Receitas por Categoria e Mês")
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-# Despesas por Categoria
+# 🔴 Despesas por Categoria
 sns.scatterplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', hue='Categoria_Despesa', palette='Reds', s=100, ax=axes[0])
 axes[0].set_title('Despesas por Categoria e Mês')
 axes[0].tick_params(axis='x', rotation=45)
 
-# Receitas por Categoria
+# 🟢 Receitas por Categoria
 sns.scatterplot(data=receitas, x='Data_Receita', y='Valor_Receita', hue='Categoria_Receita', palette='Greens', s=100, ax=axes[1])
 axes[1].set_title('Receitas por Categoria e Mês')
 axes[1].tick_params(axis='x', rotation=45)
