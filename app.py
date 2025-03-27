@@ -26,8 +26,8 @@ df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str
 df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.')
 
 # Tenta converter para float, substituindo valores inválidos (como strings) por NaN
-df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
-df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
+df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'])
+df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'])
 
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
