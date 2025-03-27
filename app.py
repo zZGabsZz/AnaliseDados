@@ -21,13 +21,17 @@ df.columns = ['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor
 # Remove a primeira linha (caso seja cabeçalho duplicado)
 df = df.drop(0)
 
-# Limpar e converter as colunas de valores para float
-df['Valor_Despesa'] = df['Valor_Despesa'].str.replace('R$', '', regex=False).str.replace(',', '.')
-df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str.replace(',', '.')
+# Função para limpar e converter valores
+def limpar_valor(valor):
+    """Remove caracteres indesejados e converte para número"""
+    if isinstance(valor, str):
+        valor = valor.strip().replace('R$', '').replace(',', '.')
+        valor = ''.join(c for c in valor if c.isdigit() or c in ['.', '-'])
+    return pd.to_numeric(valor, errors='coerce').fillna(0)
 
-# Tenta converter para float, substituindo valores inválidos (como strings) por NaN
-df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'])
-df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'])
+# Aplica a limpeza nos valores financeiros
+df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor)
+df['Valor_Receita'] = df['Valor_Receita'].apply(limpar_valor)
 
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
@@ -38,11 +42,15 @@ total_despesas = despesas['Valor_Despesa'].sum()
 total_receitas = receitas['Valor_Receita'].sum()
 saldo = total_receitas - total_despesas
 
+# Função para formatar valores como R$
+def formatar(valor):
+    return "R$ {:,.2f}".format(valor)
+
 # Exibe o resumo financeiro no Streamlit
 st.header("📊 Resumo Financeiro")
-st.write(f"🔴 **Total de Despesas:** R$ {total_despesas:,.2f}")
-st.write(f"🟢 **Total de Receitas:** R$ {total_receitas:,.2f}")
-st.write(f"💰 **Saldo Líquido:** R$ {saldo:,.2f}")
+st.write(f"🔴 **Total de Despesas:** {formatar(total_despesas)}")
+st.write(f"🟢 **Total de Receitas:** {formatar(total_receitas)}")
+st.write(f"💰 **Saldo Líquido:** {formatar(saldo)}")
 
 # Identifica as 3 principais categorias
 top_despesas = despesas.groupby('Categoria_Despesa')['Valor_Despesa'].sum().nlargest(3)
@@ -50,11 +58,11 @@ top_receitas = receitas.groupby('Categoria_Receita')['Valor_Receita'].sum().nlar
 
 st.subheader("🔎 Principais Categorias de Despesas")
 for categoria, valor in top_despesas.items():
-    st.write(f"- {categoria}: R$ {valor:,.2f}")
+    st.write(f"- {categoria}: {formatar(valor)}")
 
 st.subheader("📈 Principais Fontes de Receita")
 for categoria, valor in top_receitas.items():
-    st.write(f"- {categoria}: R$ {valor:,.2f}")
+    st.write(f"- {categoria}: {formatar(valor)}")
 
 # Gráfico de comparação Despesas vs Receitas
 st.subheader("📊 Comparativo: Despesas vs Receitas")
@@ -63,7 +71,7 @@ sns.barplot(x=['Despesas', 'Receitas'], y=[total_despesas, total_receitas], pale
 plt.ylabel('Valor (R$)')
 plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
-    plt.text(i, v + 1000, f'R$ {v:,.2f}', ha='center', fontsize=12, color='black')
+    plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
 
 # Gráficos de Despesas e Receitas por Data
