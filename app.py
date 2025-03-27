@@ -111,29 +111,26 @@ axes[1].tick_params(axis='x', rotation=45)
 plt.tight_layout()
 st.pyplot(fig)
 
-# 📊 Gráfico combinado: Despesas e Receitas ao Longo do Tempo
+# 📊 Comparação de Despesas e Receitas ao Longo do Tempo
 st.subheader("📊 Comparação de Despesas e Receitas ao Longo do Tempo")
 
-# Cria um novo dataframe combinando despesas e receitas
-df_combinado = pd.DataFrame()
+# Criar o dataframe combinado para juntar despesas e receitas
+df_combinado = pd.concat([
+    despesas[['Data_Despesa', 'Valor_Despesa']].rename(columns={'Data_Despesa': 'Mes', 'Valor_Despesa': 'Valor'}).assign(Tipo='Despesa'),
+    receitas[['Data_Receita', 'Valor_Receita']].rename(columns={'Data_Receita': 'Mes', 'Valor_Receita': 'Valor'}).assign(Tipo='Receita')
+])
 
-# Renomeia as colunas para evitar conflitos e facilitar o gráfico
-df_combinado['Data'] = pd.concat([despesas['Data_Despesa'], receitas['Data_Receita']])
-df_combinado['Valor'] = pd.concat([despesas['Valor_Despesa'], receitas['Valor_Receita']])
-df_combinado['Tipo'] = ['Despesa'] * len(despesas) + ['Receita'] * len(receitas)
+# Ordenar os meses corretamente (considerando que são strings representando meses)
+df_combinado = df_combinado.sort_values(by='Mes')
 
-# Remove valores nulos para evitar erro no gráfico
-df_combinado = df_combinado.dropna()
-
-# Ordena os dados pela data
-df_combinado = df_combinado.sort_values(by='Data')
-
-# Plota o gráfico
+# Criar o gráfico combinando Despesas e Receitas
 fig, ax = plt.subplots()
-sns.lineplot(data=df_combinado, x='Data', y='Valor', hue='Tipo', marker='o', palette={'Despesa': 'red', 'Receita': 'green'})
+sns.lineplot(data=df_combinado, x='Mes', y='Valor', hue='Tipo', marker='o', palette={'Despesa': 'red', 'Receita': 'green'})
 
-plt.xticks(rotation=45)
+plt.xticks(rotation=45)  # Inclina os meses para melhor visualização
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 plt.legend(title='Tipo')  # Exibe a legenda para diferenciar Despesas e Receitas
+
 st.pyplot(fig)
+
