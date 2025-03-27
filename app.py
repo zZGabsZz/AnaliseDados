@@ -74,49 +74,6 @@ for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
 
-# 📊 Diferença entre Receitas Fixas e Variáveis
-st.subheader("📊 Diferença entre Receitas Fixas e Variáveis")
-
-# Agrupar as receitas fixas e variáveis
-fixas_receitas = receitas[receitas['Categoria_Receita'] == 'Fixa']  # Considerando que 'Fixa' é a categoria de receita fixa
-variaveis_receitas = receitas[receitas['Categoria_Receita'] == 'Variável']  # Considerando que 'Variável' é a categoria de receita variável
-
-# Somar os valores
-total_fixas_receitas = fixas_receitas['Valor_Receita'].sum()
-total_variaveis_receitas = variaveis_receitas['Valor_Receita'].sum()
-
-# Criar o gráfico para comparar as receitas fixas e variáveis
-fig, ax = plt.subplots()
-sns.barplot(x=['Fixas', 'Variáveis'], y=[total_fixas_receitas, total_variaveis_receitas], palette=['#1f77b4', '#ff7f0e'])
-plt.ylabel('Valor (R$)')
-plt.title('Receitas Fixas vs Variáveis')
-for i, v in enumerate([total_fixas_receitas, total_variaveis_receitas]):
-    plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
-
-st.pyplot(fig)
-
-# 📊 Diferença entre Despesas Fixas e Variáveis
-st.subheader("📊 Diferença entre Despesas Fixas e Variáveis")
-
-# Agrupar as despesas fixas e variáveis
-fixas_despesas = despesas[despesas['Categoria_Despesa'] == 'Fixa']  # Considerando que 'Fixa' é a categoria de despesa fixa
-variaveis_despesas = despesas[despesas['Categoria_Despesa'] == 'Variável']  # Considerando que 'Variável' é a categoria de despesa variável
-
-# Somar os valores
-total_fixas_despesas = fixas_despesas['Valor_Despesa'].sum()
-total_variaveis_despesas = variaveis_despesas['Valor_Despesa'].sum()
-
-# Criar o gráfico para comparar as despesas fixas e variáveis
-fig, ax = plt.subplots()
-sns.barplot(x=['Fixas', 'Variáveis'], y=[total_fixas_despesas, total_variaveis_despesas], palette=['#2ca02c', '#d62728'])
-plt.ylabel('Valor (R$)')
-plt.title('Despesas Fixas vs Variáveis')
-for i, v in enumerate([total_fixas_despesas, total_variaveis_despesas]):
-    plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
-
-st.pyplot(fig)
-
-
 # 📊 Gráficos de Despesas e Receitas por Data
 
 # Agrupando as despesas por mês
