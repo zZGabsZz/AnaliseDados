@@ -25,7 +25,12 @@ df = df.drop(0)
 def limpar_valor(valor):
     if isinstance(valor, str):  # Confirma que é string antes de limpar
         valor = valor.replace('R$', '').replace(',', '.').strip()
-    return pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
+    valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
+    
+    # Verifica se o valor foi convertido para NaN
+    if pd.isna(valor_convertido):
+        st.write(f"⚠️ Valor não numérico encontrado: {valor}")  # Exibe o valor não numérico
+    return valor_convertido
 
 # Aplica a função a ambas as colunas
 df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor).fillna(0)
@@ -74,6 +79,7 @@ plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
+
 
 # Gráficos de Despesas e Receitas por Data
 
