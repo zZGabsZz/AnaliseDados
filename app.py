@@ -33,9 +33,6 @@ def limpar_valor(valor):
 df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor).fillna(0)
 df['Valor_Receita'] = df['Valor_Receita'].apply(limpar_valor).fillna(0)
 
-# 🔎 Verificação de tipos
-st.write("Tipos de dados após conversão:", df.dtypes)
-
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
 receitas = df[['Data_Receita', 'Categoria_Receita', 'Descrição_Receita', 'Valor_Receita']].dropna()
