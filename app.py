@@ -120,7 +120,7 @@ st.pyplot(fig)
 
 # 📊 Gráfico de Despesas e Receitas por Categoria e Mês
 st.subheader("📊 Despesas e Receitas por Categoria e Mês")
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+fig, axes = plt.subplots(1, 2, figsize=(20, 8))
 
 # 🔴 Despesas por Categoria
 sns.scatterplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', hue='Categoria_Despesa', palette='Reds', s=100, ax=axes[0])
