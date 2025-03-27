@@ -27,7 +27,8 @@ def limpar_valor(valor):
         valor = valor.replace('R$', '').replace(' ', '').replace('.', '')  # Remove espaços e pontos de milhar
         valor = valor.replace(',', '.')  # Substitui vírgulas por ponto para conversão numérica
     valor_convertido = pd.to_numeric(valor, errors='coerce')  # Converte, mantendo NaN se não for número
-    
+    return valor_convertido
+
 # Aplica a função a ambas as colunas
 df['Valor_Despesa'] = df['Valor_Despesa'].apply(limpar_valor).fillna(0)
 df['Valor_Receita'] = df['Valor_Receita'].apply(limpar_valor).fillna(0)
@@ -75,6 +76,7 @@ plt.title('Despesas vs Receitas')
 for i, v in enumerate([total_despesas, total_receitas]):
     plt.text(i, v + 1000, formatar(v), ha='center', fontsize=12, color='black')
 st.pyplot(fig)
+
 
 # Gráficos de Despesas e Receitas por Data
 
