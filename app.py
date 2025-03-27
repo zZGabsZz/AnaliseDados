@@ -118,20 +118,21 @@ plt.legend(title='Tipo')  # Exibe a legenda para diferenciar Despesas e Receitas
 
 st.pyplot(fig)
 
-# 📊 Gráfico de Despesas e Receitas por Categoria e Mês
-st.subheader("📊 Despesas e Receitas por Categoria e Mês")
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-st.set_page_config(layout="wide") 
+# 📊 Gráfico de Despesas por Categoria e Mês
+st.subheader("📊 Despesas por Categoria e Mês")
+fig_despesas, ax_despesas = plt.subplots(figsize=(8, 6))  # Tamanho do gráfico
+sns.scatterplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', hue='Categoria_Despesa', palette='Reds', s=100, ax=ax_despesas)
+ax_despesas.set_title('Despesas por Categoria e Mês')
+ax_despesas.tick_params(axis='x', rotation=45)
+st.pyplot(fig_despesas)
 
-# 🔴 Despesas por Categoria
-sns.scatterplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', hue='Categoria_Despesa', palette='Reds', s=100, ax=axes[0])
-axes[0].set_title('Despesas por Categoria e Mês')
-axes[0].tick_params(axis='x', rotation=45)
-
-# 🟢 Receitas por Categoria
-sns.scatterplot(data=receitas, x='Data_Receita', y='Valor_Receita', hue='Categoria_Receita', palette='Greens', s=100, ax=axes[1])
-axes[1].set_title('Receitas por Categoria e Mês')
-axes[1].tick_params(axis='x', rotation=45)
+# 📊 Gráfico de Receitas por Categoria e Mês
+st.subheader("📊 Receitas por Categoria e Mês")
+fig_receitas, ax_receitas = plt.subplots(figsize=(8, 6))  # Tamanho do gráfico
+sns.scatterplot(data=receitas, x='Data_Receita', y='Valor_Receita', hue='Categoria_Receita', palette='Greens', s=100, ax=ax_receitas)
+ax_receitas.set_title('Receitas por Categoria e Mês')
+ax_receitas.tick_params(axis='x', rotation=45)
+st.pyplot(fig_receitas)
 
 plt.tight_layout()
 st.pyplot(fig)
