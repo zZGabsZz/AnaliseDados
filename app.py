@@ -29,6 +29,10 @@ df['Valor_Receita'] = df['Valor_Receita'].str.replace('R$', '', regex=False).str
 df['Valor_Despesa'] = pd.to_numeric(df['Valor_Despesa'], errors='coerce').fillna(0)
 df['Valor_Receita'] = pd.to_numeric(df['Valor_Receita'], errors='coerce').fillna(0)
 
+# Convertendo as colunas de data para o formato datetime
+df['Data_Despesa'] = pd.to_datetime(df['Data_Despesa'], errors='coerce')
+df['Data_Receita'] = pd.to_datetime(df['Data_Receita'], errors='coerce')
+
 # Separa as tabelas de Despesas e Receitas
 despesas = df[['Data_Despesa', 'Categoria_Despesa', 'Descrição_Despesa', 'Valor_Despesa']].dropna()
 receitas = df[['Data_Receita', 'Categoria_Receita', 'Descrição_Receita', 'Valor_Receita']].dropna()
