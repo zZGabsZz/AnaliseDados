@@ -76,19 +76,25 @@ st.pyplot(fig)
 
 # Gráficos de Despesas e Receitas por Data
 
-# Despesas por Data
+# Gráficos de Despesas e Receitas por Data
+
+# Despesas por Data (Agora com eixo X renomeado para "Meses")
 st.subheader("📊 Despesas ao Longo do Tempo")
+df['Mes_Despesa'] = pd.to_datetime(despesas['Data_Despesa']).dt.to_period('M')  # Extrai o mês
 fig, ax = plt.subplots()
-sns.lineplot(data=despesas, x='Data_Despesa', y='Valor_Despesa', marker='o', color='red')
+sns.lineplot(data=despesas, x='Mes_Despesa', y='Valor_Despesa', marker='o', color='red')
 plt.xticks(rotation=45)
+plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
-# Receitas por Data
+# Receitas por Data (Agora com eixo X renomeado para "Meses")
 st.subheader("📊 Receitas ao Longo do Tempo")
+df['Mes_Receita'] = pd.to_datetime(receitas['Data_Receita']).dt.to_period('M')  # Extrai o mês
 fig, ax = plt.subplots()
-sns.lineplot(data=receitas, x='Data_Receita', y='Valor_Receita', marker='o', color='green')
+sns.lineplot(data=receitas, x='Mes_Receita', y='Valor_Receita', marker='o', color='green')
 plt.xticks(rotation=45)
+plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 st.pyplot(fig)
 
