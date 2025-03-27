@@ -120,17 +120,19 @@ df_combinado = pd.concat([
     receitas[['Data_Receita', 'Valor_Receita']].rename(columns={'Data_Receita': 'Mes', 'Valor_Receita': 'Valor'}).assign(Tipo='Receita')
 ])
 
-# Ordenar os meses corretamente (considerando que são strings representando meses)
+# Converter a coluna 'Mes' para numérico (caso não esteja) e ordenar corretamente
+df_combinado['Mes'] = pd.to_numeric(df_combinado['Mes'], errors='coerce')
 df_combinado = df_combinado.sort_values(by='Mes')
 
 # Criar o gráfico combinando Despesas e Receitas
 fig, ax = plt.subplots()
 sns.lineplot(data=df_combinado, x='Mes', y='Valor', hue='Tipo', marker='o', palette={'Despesa': 'red', 'Receita': 'green'})
 
-plt.xticks(rotation=45)  # Inclina os meses para melhor visualização
+plt.xticks(range(1, 13))  # Garante que os meses de 1 a 12 apareçam no eixo X
 plt.xlabel('Meses')  # Modifica o título do eixo X
 plt.ylabel('Valor (R$)')
 plt.legend(title='Tipo')  # Exibe a legenda para diferenciar Despesas e Receitas
 
 st.pyplot(fig)
+
 
